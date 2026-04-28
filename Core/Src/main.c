@@ -14,6 +14,9 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
 
+  // Initializing AS5600 encoder via I2C
+  as5600_init();
+
   while (1)
   {
 
