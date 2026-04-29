@@ -12,6 +12,11 @@
 #define CR1_CEN	(1U<<0)
 #define DIER_CC1IE (1U<<1)
 
+volatile uint8_t measurement_ready;
+volatile uint32_t pulse_width;
+volatile uint32_t pulse_period;
+volatile uint32_t rising_previous;
+
 void tim3_pa6_1mhz_init(void)
 {
 
@@ -55,13 +60,13 @@ void tim3_pa6_1mhz_init(void)
 
 void TIM3_IRQHandler(void)
 {
-	if (TIM3->SR &= SR_CC1IF) {
+	if (TIM3->SR & SR_CC1IF) {
 		TIM3->SR &=~ SR_CC1IF;	// When interrupt occurs clear the interrupt flag
 
 		uint32_t rising = TIM3->CCR1;	// Capturing ticks for rising edge
 		uint32_t falling = TIM3->CCR2;	// Capturing ticks for falling edge
 
-		pulse_width = rising - falling;
+		pulse_width = falling - rising_previous;
 		pulse_period = rising - rising_previous;
 
 		rising_previous = rising;

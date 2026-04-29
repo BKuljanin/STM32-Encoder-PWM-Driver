@@ -1,10 +1,13 @@
 #include "stm32f4xx_hal.h"
 #include "i2c.h"
 
+I2C_HandleTypeDef hi2c1;
+
 void as5600_init(void)
 {
-	HAL_I2C_Mem_Write(&hi2c1, AS5600_ADDRESS << 1, AS5600_CONF_1_REG, I2C_MEMADD_SIZE_8BIT,
-			(AS5600_PWM_MODE | AS5600_PWM_920_HZ), 1, 100);
+	uint8_t conf = AS5600_PWM_MODE | AS5600_PWM_920_HZ;
+
+	HAL_I2C_Mem_Write(&hi2c1, AS5600_ADDRESS << 1, AS5600_CONF_1_REG, I2C_MEMADD_SIZE_8BIT, &conf, 1, 100);
 }
 
 void MX_I2C1_Init(void)

@@ -6,11 +6,9 @@ void tim3_pa6_1mhz_init(void);
 #define CCER_CC1P (1U<<1)
 #define CCER_CC1NP (1U<<3)
 
-#define SR_CC1IF (1U<<1)
-
-volatile uint8_t measurement_ready;
-volatile uint32_t pulse_width;
-volatile uint32_t pulse_period;
-volatile uint32_t rising_previous;
+extern volatile uint8_t measurement_ready;
+extern volatile uint32_t pulse_width;
+extern volatile uint32_t pulse_period;
+extern volatile uint32_t rising_previous;
 
 #endif /* INC_TIMER_H_ */

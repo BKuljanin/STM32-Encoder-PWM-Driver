@@ -1,7 +1,7 @@
 #include "main.h"
 #include "i2c.h"
 #include "timer.h"
-
+#include "as5600.h"
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -23,7 +23,11 @@ int main(void)
 
   while (1)
   {
-
+	  if (measurement_ready == 1)
+	  {
+		  measurement_ready = 0;
+		  as5600_pwm_to_angle();
+	  }
   }
 
 }
