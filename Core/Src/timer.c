@@ -1,4 +1,5 @@
 #include "stm32f4xx.h"
+#include "timer.h"
 
 #define GPIOAEN (1U<<0)
 #define AFR6_TIM (1U<<25)
@@ -49,4 +50,24 @@ void tim3_pa6_1mhz_init(void)
 
 	// Enable TIN interrupt in NVIC
 	NVIC_EnableIRQ(TIM3_IRQn);
+}
+
+
+void TIM3_IRQHandler(void)
+{
+	if (TIM3->SR &= SR_CC1IF) {
+		TIM3->SR &=~ SR_CC1IF;	// When interrupt occurs clear the interrupt flag
+
+		uint32_t rising = TIM3->CCR1;	// Capturing ticks for rising edge
+		uint32_t falling = TIM3->CCR2;	// Capturing ticks for falling edge
+
+		pulse_width = rising - falling;
+		pulse_period = rising - rising_previous;
+
+		rising_previous = rising;
+
+		measurement_ready = 1;
+
+	    return;
+	}
 }

@@ -18,6 +18,9 @@ int main(void)
   // Initializing AS5600 encoder via I2C
   as5600_init();
 
+  // Initializing timer 3 to capture pulse width
+  tim3_pa6_1mhz_init();
+
   while (1)
   {
 
