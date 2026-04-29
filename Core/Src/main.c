@@ -1,5 +1,6 @@
 #include "main.h"
 #include "i2c.h"
+#include "timer.h"
 
 
 void SystemClock_Config(void);
