@@ -1,6 +1,8 @@
 #ifndef INC_AS5600_H_
 #define INC_AS5600_H_
 
+#include <stdint.h>
+
 #define PI 3.14159265f
 
 #define SPEED_LP_CUTOFF 150 // [Hz]
