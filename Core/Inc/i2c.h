@@ -9,7 +9,7 @@
 #define AS5600_PWM_MODE (0x20)	 	// PWM mode of the encoder
 #define AS5600_PWM_920_HZ (0x80)	// PWM frequency 920 Hz
 
-I2C_HandleTypeDef hi2c1;
+extern I2C_HandleTypeDef hi2c1;
 
 void as5600_init(void);
 void MX_I2C1_Init(void);

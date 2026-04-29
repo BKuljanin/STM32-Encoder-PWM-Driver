@@ -27,6 +27,7 @@ int main(void)
 	  {
 		  measurement_ready = 0;
 		  as5600_pwm_to_angle();
+		  as5600_calculate_speed();
 	  }
   }
 
