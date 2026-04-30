@@ -8,7 +8,7 @@
 #define CCMR1_IN_CC2S (1U<<9)
 #define CCER_CC1E (1U<<0)
 #define CCER_CC2E (1U<<4)
-#define CCER_CC2P (1U<<6)
+#define CCER_CC2P (1U<<5)
 #define CR1_CEN	(1U<<0)
 #define DIER_CC1IE (1U<<1)
 
@@ -60,14 +60,15 @@ void tim3_pa6_1mhz_init(void)
 
 void TIM3_IRQHandler(void)
 {
+
 	if (TIM3->SR & SR_CC1IF) {
 		TIM3->SR &=~ SR_CC1IF;	// When interrupt occurs clear the interrupt flag
 
 		uint32_t rising = TIM3->CCR1;	// Capturing ticks for rising edge
 		uint32_t falling = TIM3->CCR2;	// Capturing ticks for falling edge
 
-		pulse_width = falling - rising_previous;
-		pulse_period = rising - rising_previous;
+		pulse_width = (falling - rising_previous) & 0xFFFF;
+		pulse_period = (rising - rising_previous) & 0xFFFF;
 
 		rising_previous = rising;
 
