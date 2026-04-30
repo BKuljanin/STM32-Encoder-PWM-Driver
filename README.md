@@ -1,20 +1,18 @@
 # STM32-Encoder-PWM-Driver
 
-# AS5600 Magnetic Encoder PWM Capture with Angular Speed Calculation on STM32 NucleoF446RE
-
-**Note:** This project is created in STM32CubeIDE for convenience of project management, compilation, and debugging. However, **timer input capture (TIM3)** is configured manually in **bare-metal code** using register-level manipulation. The I2C peripheral uses the HAL driver for AS5600 configuration. This combination provides direct hardware control over the time-critical PWM capture path while using HAL for one-time sensor setup.
+# AS5600 Magnetic Encoder PWM Mode on STM32 NucleoF446RE
 
 ---
 
 ## Overview
 
-This project implements a **PWM-based angular position and speed measurement system** using the **AS5600 magnetic rotary encoder**. The AS5600 is configured over I2C to output its angular position as a **920 Hz PWM signal**, where the duty cycle is proportional to the magnet angle (0 to 360 degrees). The STM32's **TIM3** is configured in **PWM input capture mode** on PA6 to measure both the pulse width and period of the incoming signal. From these measurements, the angle is computed as a duty cycle ratio, and angular speed is derived by differentiating consecutive angle samples. A **first-order IIR low-pass filter** is applied to the speed signal to suppress noise amplified by the differentiation.
+This project implements a **PWM based angular position and speed measurement system** using the **AS5600 absolute magnetic rotary encoder**. The AS5600 is configured over I2C to output its angular position as a **920 Hz PWM signal**, where the duty cycle is proportional to the magnet angle (0 to 360 degrees). The STM32's **TIM3** is configured in **PWM input capture mode** on PA6 to measure both the pulse width and period of the incoming signal. From these measurements, the angle is computed as a duty cycle ratio, and angular speed is derived by differentiating consecutive angle samples. A **first order IIR low pass filter** is applied to the speed signal to filter noise amplified by the differentiation.
 
 ---
 
 ## Key Features
 
-* **Bare-Metal Timer Input Capture**
+* **Bare Metal Timer Input Capture**
   TIM3 configured in PWM input capture mode using direct register access. CH1 captures the rising edge, CH2 captures the falling edge on the same input (TI1).
 
 * **I2C Sensor Configuration**
@@ -24,7 +22,7 @@ This project implements a **PWM-based angular position and speed measurement sys
   Angular position computed from the ratio of pulse width to period, mapped to 0-360 degrees.
 
 * **Angular Speed with Low-Pass Filtering**
-  Speed derived from consecutive angle differences, filtered with a configurable first-order IIR filter (150 Hz cutoff) to attenuate noise amplified by differentiation.
+  Speed derived from consecutive angle differences, filtered with a first order IIR filter (150 Hz cutoff) to filter noise amplified by differentiation.
 
 ---
 
@@ -34,13 +32,13 @@ This project implements a **PWM-based angular position and speed measurement sys
   Program entry point, system initialization, and main loop that processes angle and speed calculations when a new PWM measurement is ready.
 
 * **`timer.c`**
-  Bare-metal configuration of **TIM3 CH1/CH2** in PWM input capture mode on PA6. Contains the `TIM3_IRQHandler` which captures pulse width and period from CCR1/CCR2 registers.
+  Bare metal configuration of **TIM3 CH1/CH2** in PWM input capture mode on PA6. Contains the `TIM3_IRQHandler` which captures pulse width and period from CCR1/CCR2 registers.
 
 * **`i2c.c`**
-  HAL-based I2C1 initialization and AS5600 configuration. Writes the CONF register (0x08) to enable PWM output mode at 920 Hz.
+  HAL based I2C1 initialization and AS5600 configuration. Writes the CONF register (0x08) to enable PWM output mode at 920 Hz.
 
 * **`as5600.c`**
-  Angle computation from duty cycle ratio and angular speed calculation with first-order IIR low-pass filter.
+  Angle computation from duty cycle ratio and angular speed calculation with LP filter.
 
 ---
 
@@ -55,7 +53,7 @@ This project implements a **PWM-based angular position and speed measurement sys
 | AS5600 OUT        | PA6       | PWM Output to TIM3 CH1 Input    |
 | AS5600 DIR        | GND       | Rotation Direction (CW)         |
 
-> **Important:** I2C requires pull-up resistors on SDA and SCL. Use **4.7 kOhm or 10 kOhm** external pull-ups to 3.3 V.
+> **Important:** I2C requires pullup resistors on SDA and SCL. In this project **5 kOhm** external pullup to 3.3 V.
 
 ---
 
@@ -64,7 +62,6 @@ This project implements a **PWM-based angular position and speed measurement sys
 * **System Clock:** 84 MHz (HSI 16 MHz, PLL: PLLM=16, PLLN=336, PLLP=4)
 * **APB1 Timer Clock:** 84 MHz (APB1 prescaler = /2, timer clock = 2x APB1)
 * **TIM3 Prescaler:** 83 (84 MHz / 84 = **1 MHz** timer tick = 1 us resolution)
-* **I2C1 Clock:** 100 kHz (standard mode)
 
 ---
 
@@ -89,7 +86,7 @@ The AS5600 encodes angular position as PWM duty cycle. The angle is recovered fr
 
 $$Angle = \frac{PulseWidth}{Period} \times 360°$$
 
-This yields a 12-bit equivalent resolution (4096 steps over 360 degrees, approximately 0.088 degrees per step).
+This gives a 12 bit resolution (4096 steps over 360 degrees, approximately 0.088 degrees per step).
 
 ---
 
@@ -99,7 +96,7 @@ Angular speed is derived by differentiating consecutive angle measurements:
 
 $$\omega_{raw} = \frac{Angle_{current} - Angle_{previous}}{Period\ [seconds]}$$
 
-A first-order IIR low-pass filter is applied to suppress noise amplified by differentiation:
+A first order IIR LP filter is applied to suppress noise amplified by differentiation:
 
 $$\alpha = \frac{2\pi \cdot \Delta t \cdot f_c}{1 + 2\pi \cdot \Delta t \cdot f_c}$$
 
@@ -115,7 +112,7 @@ Where $f_c$ = 150 Hz cutoff frequency and $\Delta t$ = period in seconds.
 | -------- | ------- | ------ | ------------------------------------ |
 | CONF (L) | 0x08    | 0xE0   | OUTS = 10 (PWM), PWMF = 11 (920 Hz) |
 
-The CONF register is a 14-bit register split across addresses 0x07 (high byte) and 0x08 (low byte). The output stage and PWM frequency settings are in the low byte at 0x08.
+The CONF register is a register split across addresses 0x07 (high byte) and 0x08 (low byte). The output stage and PWM frequency settings are in the low byte at 0x08.
 
 ---
 
