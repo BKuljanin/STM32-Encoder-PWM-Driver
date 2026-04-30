@@ -52,6 +52,7 @@ This project implements a **PWM based angular position and speed measurement sys
 | AS5600 SDA        | PB7       | I2C1 Data                       |
 | AS5600 OUT        | PA6       | PWM Output to TIM3 CH1 Input    |
 | AS5600 DIR        | GND       | Rotation Direction (CW)         |
+| AS5600 GPO        | 3.3 V     | Programming Pin                 |
 
 > **Important:** I2C requires pullup resistors on SDA and SCL. In this project **5 kOhm** external pullup to 3.3 V.
 
