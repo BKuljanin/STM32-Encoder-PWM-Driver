@@ -2,10 +2,12 @@
 #define INC_AS5600_H_
 
 #include <stdint.h>
+#include "stm32f4xx.h"
 
 #define PI 3.14159265f
 
-#define SPEED_LP_CUTOFF 150 // [Hz]
+#define ANGLE_LP_CUTOFF 30  // [Hz]
+#define SPEED_LP_CUTOFF 20  // [Hz]
 
 // AS5600 PWM cycle: [128 always LOW][4095 angle][128 always HIGH] = 4351 total
 // Even at 0 degrees the duty cycle is ~3%, never fully LOW.

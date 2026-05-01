@@ -69,6 +69,14 @@ void TIM3_IRQHandler(void)
 		uint32_t rising = TIM3->CCR1;	// Capturing ticks for rising edge
 		uint32_t falling = TIM3->CCR2;	// Capturing ticks for falling edge
 
+		// Skip first interrupt, rising_previous is not valid yet
+		static uint8_t first = 1;
+		if (first) {
+			first = 0;
+			rising_previous = rising;
+			return;
+		}
+
 		pulse_width = (falling - rising_previous) & 0xFFFF;
 		pulse_period = (rising - rising_previous) & 0xFFFF;
 
