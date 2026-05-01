@@ -19,10 +19,18 @@ void as5600_pwm_to_angle(void)
 	uint32_t period = pulse_period;
 	if (period < 900) period = 900;
 
-	float angle = ((float)pulse_width / (float)period) * 360.0f;
+	// Remove the 128 tick bias so 0 degrees maps to 0 and 360 maps to 360
+	// AS5600 PWM cycle: [128 always LOW][4095 angle][128 always HIGH] = 4351 total
+	// Even at 0 degrees the duty cycle is ~3%, never fully LOW.
+	// Even at 360 degrees the duty cycle is ~97%, never fully HIGH.
+	// This way we can always tell the sensor is alive and outputting.
+	float duty = (float)pulse_width / (float)period;
+	float raw = duty * AS5600_DCL_TOTAL - AS5600_DCL_PADDING;
 
-	if (angle > 360.0f) angle = 360.0f;
-	if (angle < 0.0f) angle = 0.0f;
+	if (raw < 0.0f) raw = 0.0f;
+	if (raw > AS5600_DCL_ANGLE) raw = AS5600_DCL_ANGLE;
+
+	float angle = (raw / AS5600_DCL_ANGLE) * 360.0f;
 
 	encoder.angle = angle;
 }
