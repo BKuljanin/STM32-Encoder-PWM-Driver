@@ -41,6 +41,8 @@ void tim3_pa6_1mhz_init(void)
 	// Set CH2 to listen on same input as CH1
 	TIM3->CCMR1 |= CCMR1_IN_CC2S;	// Reference manual p495
 
+	TIM3->CCMR1 |= (0x3 << 4) | (0x3 << 12); // test filter
+
 	// Initialize CH1 to capture at rising edge, default is rising edge
 	TIM3->CCER |= CCER_CC1E; // Reference manual p499 capture/compare enable register, p501 CC1E see configuration for input, bit 0 capture enable
 

@@ -56,12 +56,6 @@ dkms.conf
 
 
 
-# HAL and Cube files
-Core/Inc/stm32*
-Core/Src/stm32*
-Core/Src/sys*.c
-Core/Startup/startup*.s
-
 # Build outputs
 Debug/
 Release/
