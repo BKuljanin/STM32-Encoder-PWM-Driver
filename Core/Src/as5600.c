@@ -21,7 +21,7 @@ void as5600_pwm_to_angle(void)
 	uint32_t period = pulse_period;
 	__enable_irq();
 
-	//if (period < 900) period = 900;
+	if (period < 900) period = 900;
 
 	// Remove the 128 tick bias so 0 degrees maps to 0 and 360 maps to 360
 	// AS5600 PWM cycle: [128 always LOW][4095 angle][128 always HIGH] = 4351 total
