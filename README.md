@@ -1,4 +1,4 @@
-# AS5600 Magnetic Encoder PWM Driver on STM32F446RE
+# AS5600 Absolute Magnetic Encoder PWM Driver on STM32F446RE
 
 PWM based angular position and speed measurement using the AS5600 magnetic rotary encoder on an STM32 Nucleo F446RE. The AS5600 is configured over I2C to output a 920 Hz PWM signal where the duty cycle represents the magnet angle. TIM3 captures the pulse width and period using hardware input capture, and the firmware computes angle and angular speed from those measurements.
 
@@ -30,7 +30,7 @@ Angular speed is the derivative of consecutive filtered angle samples:
 
 $$\omega_{raw} = \frac{\Delta angle}{period\ [seconds]}$$
 
-The angle is unwrapped before filtering to prevent the LP filter from seeing a false 360 degree jump at the 0/360 boundary. After filtering, the angle is wrapped back to 0 to 360 for storage.
+The angle is unwrapped before filtering to prevent the LP filter from seeing a false 360 degree jump at the 0/360 boundary. After filtering, the angle is wrapped back to 0 to 360.
 
 A first order IIR low pass filter is used on both angle and speed:
 
@@ -67,7 +67,7 @@ Input capture filter is enabled on both channels to reject noise from edge ringi
 | AS5600 SDA        | PB7       | I2C1 Data                       |
 | AS5600 OUT        | PA6       | PWM Output to TIM3 CH1 Input    |
 | AS5600 DIR        | GND       | Rotation Direction (CW)         |
-| AS5600 PGO        | 3.3 V     | Must be floating or HIGH, LOW disables output |
+| AS5600 PGO        | 3.3 V     | HIGH enables output pin         |
 
 I2C requires pullup resistors on SDA and SCL. This project uses 5 kOhm external pullups to 3.3 V.
 
