@@ -2,7 +2,7 @@
 
 as5600 encoder;
 
-float lp_filter(float signal, float LP_cutoff, float delta_t, float *state)
+static float lp_filter(float signal, float LP_cutoff, float delta_t, float *state)
 {
 	float alpha = 2 * PI * delta_t * LP_cutoff / (1 + 2 * PI * delta_t * LP_cutoff);
 
